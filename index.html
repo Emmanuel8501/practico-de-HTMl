@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Academy - Dashboard</title>
+  <style>
+    :root {
+      --teal-dark: #0e5a60;
+      --teal: #2a9d95;
+      --teal-soft: #e3f1ef;
+      --orange: #f7993e;
+      --orange-soft: #fcd7b0;
+      --green-soft: #bfe3c6;
+      --bg: #e6f1f0;
+      --text: #12282b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Roboto", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* ---------- HEADER ---------- */
+    .site-header {
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 10px 18px;
+    }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; line-height: 1; color: var(--teal-dark); letter-spacing: .5px; }
+    .logo svg { width: 42px; height: 42px; }
+    .search { flex: 0 1 385px; margin-right: auto; margin-left: 40px; }
+    .search input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1px solid #9fc4c0;
+      border-radius: 20px;
+      background: #e8f1f0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") no-repeat 12px center;
+      font-size: 15px;
+    }
+    .user-tools { display: flex; align-items: center; gap: 18px; }
+    .user-tools svg { width: 22px; height: 22px; fill: var(--teal-dark); }
+    .bell { position: relative; }
+    .bell::after { content: ""; position: absolute; top: -4px; right: -4px; width: 11px; height: 11px; background: var(--orange); border-radius: 50%; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: #c7c7c7; display: block; }
+
+    /* ---------- NAV ---------- */
+    .main-nav { background: var(--teal-dark); }
+    .main-nav ul { list-style: none; display: flex; }
+    .main-nav li { flex: 1; text-align: center; }
+    .main-nav a { display: block; padding: 11px 0; color: #fff; font-size: 15px; letter-spacing: .3px; text-transform: uppercase; }
+    .main-nav a.active { color: var(--orange); background: #0b4a50; }
+
+    /* ---------- LAYOUT ---------- */
+    .layout {
+      display: grid;
+      grid-template-columns: 165px 1fr;
+      gap: 15px;
+      padding: 16px 18px 20px;
+      align-items: start;
+    }
+    .content { display: grid; gap: 12px; }
+    .two-cols { display: grid; grid-template-columns: 1fr 252px; gap: 12px; align-items: start; }
+
+    .panel { background: #fff; border: 1px solid var(--teal-dark); border-radius: 4px; overflow: hidden; }
+    .panel > h2, .panel > header h2 {
+      font-size: 17px; font-weight: 500; text-transform: uppercase; padding: 10px 11px; color: #fff; background: var(--teal);
+    }
+    .panel.orange > h2 { background: var(--orange); color: #12282b; }
+    .panel-body { padding: 10px; }
+
+    /* ---------- QUICK ACCESS ---------- */
+    .quick-access { background: var(--teal-soft); }
+    .quick-access h2 { background: var(--teal-dark); text-align: center; }
+    .quick-access ul { list-style: none; padding: 10px; display: grid; gap: 12px; }
+    .quick-access a {
+      display: block; text-align: center; padding: 16px 6px; font-weight: 500; font-size: 15px;
+      border: 1px solid var(--teal-dark); border-radius: 6px; background: #e8f3f2;
+    }
+    .quick-access a.highlight { background: #fde7d0; border-color: var(--orange); }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      margin: 10px;
+      min-height: 142px;
+      border-radius: 4px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+      color: #fff; padding: 16px 90px;
+      background: linear-gradient(90deg, rgba(20,60,66,.88) 0%, rgba(20,70,76,.8) 55%, rgba(60,70,60,.65) 100%),
+                  radial-gradient(circle at 85% 40%, #c9854c 0, #3d4a4a 45%, #1c3b40 100%);
+    }
+    .hero h3 { font-size: 26px; font-weight: 500; letter-spacing: .5px; margin-bottom: 8px; }
+    .hero p { font-size: 15px; line-height: 1.35; }
+
+    /* ---------- TABLE ---------- */
+    .schedule-wrap { padding: 10px; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--teal-dark); border-radius: 6px; overflow: hidden; background: var(--teal-soft); }
+    th { background: var(--teal-dark); color: #fff; font-weight: 500; text-align: left; padding: 8px; font-size: 14px; border-right: 1px solid #2f7f84; }
+    td { border-top: 1px solid var(--teal-dark); border-right: 1px solid var(--teal-dark); padding: 5px 8px; font-size: 13px; vertical-align: middle; }
+    td:last-child, th:last-child { border-right: 0; }
+    td.module { text-align: left; font-size: 13px; background: var(--teal-soft); }
+    td ul { padding-left: 18px; }
+    .st-ok { background: var(--green-soft); }
+    .st-warn { background: var(--orange-soft); }
+
+    /* ---------- READING ---------- */
+    .reading-list { list-style: none; padding: 10px; display: grid; gap: 10px; }
+    .reading-item { display: flex; gap: 8px; border: 1px solid var(--teal-dark); border-radius: 6px; padding: 8px; }
+    .reading-item img { width: 62px; height: 62px; object-fit: cover; border-radius: 4px; flex: none; background: #c9b8a5; }
+    .reading-item h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .reading-item p { font-size: 11.5px; line-height: 1.3; }
+
+    /* ---------- FORM ---------- */
+    .support-form { padding: 14px 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 14px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-weight: 600; font-size: 14px; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--teal-dark); border-radius: 4px; padding: 8px; font: inherit; background: #fff;
+    }
+    .field select { background: #eef3f3; }
+    .field textarea { min-height: 80px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus, .btn:focus-visible { outline: 3px solid var(--orange); outline-offset: 1px; }
+    .btn { background: var(--orange); color: #fff; border: 0; border-radius: 4px; padding: 9px 16px; font-size: 14px; cursor: pointer; justify-self: start; }
+    .btn:hover { background: #e8872a; }
+    .req { color: #b3261e; }
+
+    /* ---------- FOOTER ---------- */
+    .site-footer { background: var(--teal-dark); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-size: 14px; }
+    .site-footer nav ul { list-style: none; display: flex; gap: 22px; }
+
+    @media (max-width: 800px) {
+      .layout, .two-cols, .support-form { grid-template-columns: 1fr; }
+      .main-nav ul { flex-wrap: wrap; }
+      .site-footer { flex-direction: column; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== ENCABEZADO ========== -->
+  <header class="site-header">
+    <a href="#" class="logo" aria-label="Global Academy - inicio">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="24" r="20" fill="none" stroke="#2a9d95" stroke-width="3"/>
+        <ellipse cx="24" cy="24" rx="9" ry="20" fill="none" stroke="#2a9d95" stroke-width="2"/>
+        <path d="M4 24h40M8 14h32M8 34h32" stroke="#2a9d95" stroke-width="2" fill="none"/>
+        <path d="M10 36l10-8 7 4 13-14" stroke="#f7993e" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span>GLOBAL<br>ACADEMY</span>
+    </a>
+
+    <form class="search" role="search" action="#" method="get">
+      <label for="q" class="visually-hidden" style="position:absolute;left:-9999px">Search</label>
+      <input type="search" id="q" name="q" placeholder="Search...">
+    </form>
+
+    <div class="user-tools">
+      <svg viewBox="0 0 24 24" aria-label="Apps"><path d="M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4zM16 16h4v4h-4z"/></svg>
+      <span class="bell"><svg viewBox="0 0 24 24" aria-label="Notifications"><path d="M12 22a2 2 0 0 0 2-2h-4a2 2 0 0 0 2 2zm6-6V11c0-3-2-5.5-5-6.2V4a1 1 0 0 0-2 0v.8C8 5.5 6 8 6 11v5l-2 2v1h16v-1z"/></svg></span>
+      <span class="avatar" role="img" aria-label="User profile"></span>
+    </div>
+  </header>
+
+  <!-- ========== NAVEGACIÓN PRINCIPAL ========== -->
+  <nav class="main-nav" aria-label="Main navigation">
+    <ul>
+      <li><a href="#" class="active" aria-current="page">Dashboard</a></li>
+      <li><a href="#">My Courses</a></li>
+      <li><a href="#">Resources</a></li>
+      <li><a href="#">Community</a></li>
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+
+  <div class="layout">
+
+    <!-- ========== BARRA LATERAL ========== -->
+    <aside class="panel quick-access" aria-labelledby="qa-title">
+      <h2 id="qa-title">Quick Access</h2>
+      <ul>
+        <li><a href="#">Announcements</a></li>
+        <li><a href="#" class="highlight">Calendar Events</a></li>
+        <li><a href="#">Grades</a></li>
+        <li><a href="#">Faculty Directory</a></li>
+      </ul>
+    </aside>
+
+    <!-- ========== CONTENIDO PRINCIPAL ========== -->
+    <main class="content">
+
+      <!-- Learning Hub -->
+      <section class="panel" aria-labelledby="hub-title">
+        <h2 id="hub-title">Learning Hub</h2>
+        <div class="hero">
+          <h3>WELCOME BACK</h3>
+          <p>Join your learning community and stay motivated.<br>Get into your community truth.</p>
+        </div>
+      </section>
+
+      <div class="two-cols">
+
+        <!-- Course Schedule -->
+        <section class="panel orange" aria-labelledby="schedule-title">
+          <h2 id="schedule-title">Course Schedule</h2>
+          <div class="schedule-wrap">
+            <table>
+              <caption style="position:absolute;left:-9999px">Course schedule by module</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Module</th>
+                  <th scope="col">Topic</th>
+                  <th scope="col">Instructor</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="module" rowspan="3" scope="rowgroup">Module 1</td>
+                  <td><ul><li>Learning &amp; Profession Courses</li></ul></td>
+                  <td>John B.B.</td>
+                  <td>8/12/2024</td>
+                  <td class="st-ok">Complete</td>
+                </tr>
+                <tr>
+                  <td><ul><li>Explorement Learning</li></ul></td>
+                  <td>BerniMant</td>
+                  <td>3/11/2024</td>
+                  <td class="st-ok">Complete</td>
+                </tr>
+                <tr>
+                  <td><ul><li>Summary Learning</li></ul></td>
+                  <td>Jim F.</td>
+                  <td>1/12/2024</td>
+                  <td class="st-warn">Complete</td>
+                </tr>
+
+                <tr>
+                  <td class="module" rowspan="2">Module 2</td>
+                  <td><ul><li>Student Schedule</li></ul></td>
+                  <td>Geman S.</td>
+                  <td>8/12/2024</td>
+                  <td class="st-ok">Success</td>
+                </tr>
+                <tr>
+                  <td><ul><li>Developmental Learning</li></ul></td>
+                  <td>Flaschhster</td>
+                  <td>0/12/2024</td>
+                  <td class="st-warn">Success</td>
+                </tr>
+                <tr>
+                  <td class="module"></td>
+                  <td><ul><li>Social Learning Designs &amp; communicities</li></ul></td>
+                  <td>Mariv W.</td>
+                  <td>8/12/2024</td>
+                  <td class="st-warn">Plan</td>
+                </tr>
+                <tr>
+                  <td class="module" style="background:#fff"></td>
+                  <td><ul><li>Summary Schedule</li></ul></td>
+                  <td>Jims A.</td>
+                  <td>0/13/2024</td>
+                  <td class="st-warn">Plan</td>
+                </tr>
+
+                <tr>
+                  <td class="module" rowspan="3">Module 3</td>
+                  <td><ul><li>Student Learning</li></ul></td>
+                  <td>Marw M.</td>
+                  <td>9/12/2024</td>
+                  <td class="st-ok">Complete</td>
+                </tr>
+                <tr>
+                  <td><ul><li>Complete Learning</li></ul></td>
+                  <td>Geman S.</td>
+                  <td>0/12/2024</td>
+                  <td class="st-ok">Success</td>
+                </tr>
+                <tr>
+                  <td><ul><li>Developmental Learning</li></ul></td>
+                  <td>Flaschhster</td>
+                  <td>9/13/2024</td>
+                  <td class="st-warn">Success</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Recommended Reading -->
+        <section class="panel orange" aria-labelledby="reading-title">
+          <h2 id="reading-title">Recommended Reading</h2>
+          <ul class="reading-list">
+            <li>
+              <article class="reading-item">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='62' height='62'%3E%3Crect width='62' height='62' fill='%23b9a58f'/%3E%3C/svg%3E" alt="Students studying together">
+                <div>
+                  <h3>Recommended Articles</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Immoment dis tears and mendal wikinta nulalerating contept.</p>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="reading-item">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='62' height='62'%3E%3Crect width='62' height='62' fill='%23a58f7a'/%3E%3C/svg%3E" alt="Person working on a laptop">
+                <div>
+                  <h3>Fast Fittine Becoming Articles</h3>
+                  <p>Follow engineer communts authnienitaries and inscium personaded oraids, saic at compandus card the tingruml.</p>
+                </div>
+              </article>
+            </li>
+            <li>
+              <article class="reading-item">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='62' height='62'%3E%3Crect width='62' height='62' fill='%23c4a58b'/%3E%3C/svg%3E" alt="Student reading at a desk">
+                <div>
+                  <h3>Recommended Articles</h3>
+                  <p>Lorem ipsum dolor sit amet, consectetur senior anicultural artich comver an exinecate fert menting portiones.</p>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Feedback & Support -->
+      <section class="panel" aria-labelledby="feedback-title">
+        <h2 id="feedback-title">Feedback &amp; Support</h2>
+
+        <form class="support-form" action="#" method="post">
+          <div class="field">
+            <label for="subject">Subject <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="subject" name="subject" required maxlength="100" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="category">Category <span class="req" aria-hidden="true">*</span></label>
+            <select id="category" name="category" required>
+              <option value="" selected disabled>Select Category</option>
+              <option value="technical">Technical support</option>
+              <option value="academic">Academic inquiry</option>
+              <option value="billing">Billing</option>
+              <option value="feedback">General feedback</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label for="message">Your Message <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="message" name="message" rows="4" required minlength="10"></textarea>
+          </div>
+
+          <button type="submit" class="btn">Send</button>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========== PIE DE PÁGINA ========== -->
+  <footer class="site-footer">
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Use</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <p>&copy; 2024 GLOBAL ACADEMY</p>
+  </footer>
+
+</body>
+</html>
